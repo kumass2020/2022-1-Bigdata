@@ -1,0 +1,20 @@
+[
+    {
+        "nat_cd": "275",
+        "nat_name": "미국",
+        "visit_cnt": 15570,
+        "yyyymm": "202201"
+    },
+    {
+        "nat_cd": "275",
+        "nat_name": "미국",
+        "visit_cnt": 15845,
+        "yyyymm": "202202"
+    },
+    {
+        "nat_cd": "275",
+        "nat_name": "미국",
+        "visit_cnt": 16968,
+        "yyyymm": "202203"
+    }
+]
