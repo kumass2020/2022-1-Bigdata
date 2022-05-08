@@ -16,9 +16,11 @@ for object in data:
 
 fig, ax = plt.subplots()
 
-ax.plot(x, y, linewidth=2.0)
+ax.set_ylabel('관광객 수')
 
-ax.set(ylim=(0, max(y)), yticks=[0, max(y)*2/4, max(y)*3/4, max(y)],
+ax.plot(x, y)
+
+ax.set(ylim=(0, max(y)), yticks=[max(y)/4, max(y)*2/4, max(y)*3/4, max(y)],
         xlim=(0, "202203"), xticks=["202001", "202101", "202201"])
 
 plt.show()
