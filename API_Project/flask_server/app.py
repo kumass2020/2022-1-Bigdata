@@ -6,6 +6,6 @@ with open("가천대_naver_news.json", "r") as json_file:
     data = json.load(json_file)
 
 @app.route("/")
-def hello():
+def index():
     return render_template("index.html", news_dict_list=data[0:11])
 
