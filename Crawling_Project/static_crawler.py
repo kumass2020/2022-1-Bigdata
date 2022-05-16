@@ -13,8 +13,12 @@ def crawl():
         tag_tbody = soup.find('tr')
         for content in tag_tbody.find_all('tr')[1:]:
             content_td = content[0].string
-            content_subject = content[1].string
-            
+            content_subject = content[1].string.replace('N', '')
+            content_writer = content[2].string
+            content_date = content[3].string
+            content_view = content[4].string
+            content_comment = content[5].string
+            content_file_num = content[6].string
 
 
 if __name__=='__main__':
