@@ -131,3 +131,4 @@ dmypy.json
 # Customize
 .idea/
 .DS_Store
+Crawling_Project/chromedriver
