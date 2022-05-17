@@ -1,5 +1,4 @@
 from selenium import webdriver
-import requests
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -8,7 +7,7 @@ import time
 from bs4 import BeautifulSoup
 import pandas as pd
 
-def returnDriver(self):
+def returnDriver():
     options = webdriver.ChromeOptions()
     # options.add_argument('headless')
     options.add_argument('window-size=960x1000')
@@ -16,7 +15,7 @@ def returnDriver(self):
     options.add_argument("lang=en_US")
     options.add_argument("timezone=UTC+9")
 
-    driver = webdriver.Chrome('chromedriver', chrome_options=options)
+    driver = webdriver.Chrome('./Crawling_Project/chromedriver', chrome_options=options)
     driver.execute_script("Object.defineProperty(navigator, 'languages', {get: function() {return ['en_US', 'en']}})")
 
     return driver
@@ -57,14 +56,20 @@ def crawl(result):
     print(len(tweets))
 
     for tweet in tweets:
-        tweet_writer_span = tweet.select('.css-901oao.css-16my406.css-bfa6kz.r-poiln3.r-bcqeeo.r-qvutc0')
-        tweet_id_div = tweet.select('.css-901oao.css-bfa6kz.r-1bwzh9t.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0')
-        tweet_datetime_a = tweet.select('.css-4rbku5.css-18t94o4.css-901oao.r-1bwzh9t.r-1loqt21.r-1q142lx.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-3s2u2q.r-qvutc0')
+        tweet_writer_span = tweet.select('.css-901oao.css-16my406.css-bfa6kz.r-poiln3.r-bcqeeo.r-qvutc0')[0]
+        tweet_id_div = tweet.select('.css-901oao.css-bfa6kz.r-1bwzh9t.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0')[0]
+        tweet_datetime_a = tweet.select('.css-4rbku5.css-18t94o4.css-901oao.r-1bwzh9t.r-1loqt21.r-1q142lx.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-3s2u2q.r-qvutc0')[0]
         tweet_text_div = tweet.select('.css-901oao.r-1nao33i.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0')
-        
+        # 인용 트윗인 경우 2개 트윗이 리스트로 걸림
+        if str(type(tweet_text_div)) == "<class 'bs4.element.ResultSet'>":
+            print("list")
+            tweet_text_div = tweet_text_div[0]
+
         tweet_writer = tweet_writer_span.text
         tweet_id = tweet_id_div.text
-        tweet_datetime = str(tweet_datetime_a.find('time').datetime)
+        tweet_datetime = str(tweet_datetime_a.find('time').attrs['datetime'])
+
+        print(type(tweet_text_div))
         tweet_text = tweet_text_div.text
 
         result.append([tweet_writer]+[tweet_id]+[tweet_datetime]+[tweet_text])
