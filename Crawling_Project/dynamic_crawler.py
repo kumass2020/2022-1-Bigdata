@@ -49,9 +49,6 @@ def crawl(result):
 
     current_y = 1080
     while True:
-        # current_y = driver.execute_script("return document.body.scrollHeight")
-        # driver.execute_script("window.scrollTo(0, " + str(int(current_y) - 1080) +");")
-        
         new_y = current_y + 1080
         
         driver.execute_script("window.scrollTo(0, " + str(new_y) +");")
@@ -59,7 +56,6 @@ def crawl(result):
         # driver의 현재 page source로 beautifulsoup 객체 생성
         soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-        # tweets = soup.select('.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1ny4l3l')
         tweets = soup.select('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu')
         
         # 파싱할 tweet의 갯수
@@ -88,7 +84,10 @@ def crawl(result):
             except AttributeError:
                 tweet_text = ""
 
-            result.append([tweet_writer]+[tweet_id]+[tweet_datetime]+[tweet_text])
+            if tweet_datetime in (element[2] for element in result):
+                pass
+            else:
+                result.append([tweet_writer]+[tweet_id]+[tweet_datetime]+[tweet_text])
         
         current_min_height = driver.execute_script("return document.body.scrollHeight")
         if current_min_height <= new_y + 1080:
