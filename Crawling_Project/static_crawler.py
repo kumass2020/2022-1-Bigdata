@@ -48,7 +48,8 @@ if __name__=='__main__':
     # 해당 attribute를 가진 데이터프레임 생성
     tbl = pd.DataFrame(result, columns={'id', 'subject', 'writer', 'date', 'view', 'comment', 'file'})
 
-    # DataFrame to CSV file
+    # DataFrame to CSV filetitanic['survived'].corr(titanic['fare'])
+
     tbl.columns
     tbl.to_csv('./Gachon_CS_Notice.csv', encoding='utf-8', mode='w', index=False)
 
