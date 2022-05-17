@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 import time
 from bs4 import BeautifulSoup
+import pandas as pd
 
 def returnDriver(self):
     options = webdriver.ChromeOptions()
@@ -42,7 +43,7 @@ def crawl(result):
         time.sleep(1)
 
         new_height = driver.execute_script("return document.body.scrollHeight")
-        # 더 이상 스크롤 되지 않으면 while문 escape
+        # 더 이상 스크롤 되지 않으면 while문 escape                                                                                             
         if new_height == last_height:
             break
         last_height = new_height
@@ -50,11 +51,37 @@ def crawl(result):
     # driver의 현재 page source로 beautifulsoup 객체 생성
     soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-    tweet = soup.select('.css-901oao.r-1nao33i.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0')
+    tweets = soup.select('.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1ny4l3l')
     
     # 파싱할 tweet의 갯수
-    print(len(tweet))
+    print(len(tweets))
+
+    for tweet in tweets:
+        tweet_writer_span = tweet.select('.css-901oao.css-16my406.css-bfa6kz.r-poiln3.r-bcqeeo.r-qvutc0')
+        tweet_id_div = tweet.select('.css-901oao.css-bfa6kz.r-1bwzh9t.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0')
+        tweet_datetime_a = tweet.select('.css-4rbku5.css-18t94o4.css-901oao.r-1bwzh9t.r-1loqt21.r-1q142lx.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-3s2u2q.r-qvutc0')
+        tweet_text_div = tweet.select('.css-901oao.r-1nao33i.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0')
+        
+        tweet_writer = tweet_writer_span.text
+        tweet_id = tweet_id_div.text
+        tweet_datetime = str(tweet_datetime_a.find('time').datetime)
+        tweet_text = tweet_text_div.text
+
+        result.append([tweet_writer]+[tweet_id]+[tweet_datetime]+[tweet_text])
+    
+    return
 
 
 if __name__=="__main__":
-    crawl()
+    result = []
+    print('Twitter crawling >>>>>>>>>>>>>>>>>>>>>>>')
+    crawl(result)
+
+    # 해당 attribute를 가진 데이터프레임 생성
+    tbl = pd.DataFrame(result, columns={'writer', 'id', 'datetime', 'text'})
+
+    # DataFrame to CSV file
+    tbl.columns
+    tbl.to_csv('./elon_twitter.csv', encoding='utf-8', mode='w', index=False)
+
+    del result[:]
