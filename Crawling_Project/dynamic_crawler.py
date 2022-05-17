@@ -40,39 +40,60 @@ def crawl(result):
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         # 로딩 대기
         time.sleep(1)
-
+   
         new_height = driver.execute_script("return document.body.scrollHeight")
         # 더 이상 스크롤 되지 않으면 while문 escape                                                                                             
         if new_height == last_height:
             break
         last_height = new_height
 
-    # driver의 현재 page source로 beautifulsoup 객체 생성
-    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    current_y = 1080
+    while True:
+        # current_y = driver.execute_script("return document.body.scrollHeight")
+        # driver.execute_script("window.scrollTo(0, " + str(int(current_y) - 1080) +");")
+        
+        new_y = current_y + 1080
+        
+        driver.execute_script("window.scrollTo(0, " + str(new_y) +");")
 
-    tweets = soup.select('.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1ny4l3l')
-    
-    # 파싱할 tweet의 갯수
-    print(len(tweets))
+        # driver의 현재 page source로 beautifulsoup 객체 생성
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-    for tweet in tweets:
-        tweet_writer_span = tweet.select('.css-901oao.css-16my406.css-bfa6kz.r-poiln3.r-bcqeeo.r-qvutc0')[0]
-        tweet_id_div = tweet.select('.css-901oao.css-bfa6kz.r-1bwzh9t.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0')[0]
-        tweet_datetime_a = tweet.select('.css-4rbku5.css-18t94o4.css-901oao.r-1bwzh9t.r-1loqt21.r-1q142lx.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-3s2u2q.r-qvutc0')[0]
-        tweet_text_div = tweet.select('.css-901oao.r-1nao33i.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0')
-        # 인용 트윗인 경우 2개 트윗이 리스트로 걸림
-        if str(type(tweet_text_div)) == "<class 'bs4.element.ResultSet'>":
-            print("list")
-            tweet_text_div = tweet_text_div[0]
+        # tweets = soup.select('.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1ny4l3l')
+        tweets = soup.select('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu')
+        
+        # 파싱할 tweet의 갯수
+        print(len(tweets))
 
-        tweet_writer = tweet_writer_span.text
-        tweet_id = tweet_id_div.text
-        tweet_datetime = str(tweet_datetime_a.find('time').attrs['datetime'])
+        for tweet in tweets:
+            tweet_writer_span = tweet.select('.css-901oao.css-16my406.css-bfa6kz.r-poiln3.r-bcqeeo.r-qvutc0')[0]
+            tweet_id_div = tweet.select('.css-901oao.css-bfa6kz.r-1bwzh9t.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0')[0]
+            tweet_datetime_a = tweet.select('.css-4rbku5.css-18t94o4.css-901oao.r-1bwzh9t.r-1loqt21.r-1q142lx.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-3s2u2q.r-qvutc0')[0]
+            tweet_text_div = tweet.select('.css-901oao.r-1nao33i.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0')
+            # 인용 트윗인 경우 2개 트윗이 리스트로 걸림
+            if str(type(tweet_text_div)) == "<class 'bs4.element.ResultSet'>":
+                # print("list")
+                try:
+                    tweet_text_div = tweet_text_div[0]
+                except IndexError:
+                    pass
 
-        print(type(tweet_text_div))
-        tweet_text = tweet_text_div.text
+            tweet_writer = tweet_writer_span.text
+            tweet_id = tweet_id_div.text
+            tweet_datetime = str(tweet_datetime_a.find('time').attrs['datetime'])
 
-        result.append([tweet_writer]+[tweet_id]+[tweet_datetime]+[tweet_text])
+            # print(type(tweet_text_div))
+            try:
+                tweet_text = tweet_text_div.text
+            except AttributeError:
+                tweet_text = ""
+
+            result.append([tweet_writer]+[tweet_id]+[tweet_datetime]+[tweet_text])
+        
+        current_min_height = driver.execute_script("return document.body.scrollHeight")
+        if current_min_height <= new_y + 1080:
+            break
+        current_y += 1080
     
     return
 
