@@ -68,7 +68,6 @@ def crawl(result):
             tweet_text_div = tweet.select('.css-901oao.r-1nao33i.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0')
             # 인용 트윗인 경우 2개 트윗이 리스트로 걸림
             if str(type(tweet_text_div)) == "<class 'bs4.element.ResultSet'>":
-                # print("list")
                 try:
                     tweet_text_div = tweet_text_div[0]
                 except IndexError:
@@ -78,7 +77,6 @@ def crawl(result):
             tweet_id = tweet_id_div.text
             tweet_datetime = str(tweet_datetime_a.find('time').attrs['datetime'])
 
-            # print(type(tweet_text_div))
             try:
                 tweet_text = tweet_text_div.text
             except AttributeError:

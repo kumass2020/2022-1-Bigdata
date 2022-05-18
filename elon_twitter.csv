@@ -1,4 +1,4 @@
-writer,text,datetime,id
+writer,id,datetime,text
 Elon Musk,@elonmusk,2022-05-15T01:34:47.000Z,Incredible art
 Elon Musk,@elonmusk,2022-05-15T01:32:28.000Z,Great shoes
 Elon Musk,@elonmusk,2022-05-15T00:45:18.000Z,Borderline too sexy

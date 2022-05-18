@@ -6,7 +6,18 @@ import re
 
 # 정규표현식 사용 
 def regularize(str1):
-    return re.sub('[^0-9a-zA-Zㄱ-힗\r]','',str(str1))
+    # str2 = str1
+    # str3 = str(str2).strip()
+    # if str2 == None:
+    #     pass
+    # else:
+    #     str4 = ' '.join(str2.split())
+
+    # return re.sub('[^0-9a-zA-Zㄱ-힗.\s]','',str(str1))
+    if str1 == None:
+        return None
+    else:
+        return ' '.join(str1.split())
 
 # 크롤링 수행
 def crawl(result):
