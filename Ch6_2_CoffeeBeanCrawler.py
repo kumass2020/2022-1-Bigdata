@@ -4,31 +4,74 @@ import pandas as pd
 import datetime
 
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 import time
 
 #[CODE 1]
 def CoffeeBean_store(result):
     CoffeeBean_URL = "https://www.coffeebeankorea.com/store/store.asp"
-    wd = webdriver.Chrome('./WebDriver/chromedriver')
+    wd = webdriver.Chrome('./chromedriver.exe')
              
-    for i in range(1, 370):  #매장 수 만큼 반복
-        wd.get(CoffeeBean_URL)
-        time.sleep(1)  #웹페이지 연결할 동안 1초 대기
-        try:
-            wd.execute_script("storePop2(%d)" %i)
-            time.sleep(1) #스크립트 실행 할 동안 1초 대기
-            html = wd.page_source
-            soupCB = BeautifulSoup(html, 'html.parser')
-            store_name_h2 = soupCB.select("div.store_txt > h2")
-            store_name = store_name_h2[0].string
-            print(store_name)  #매장 이름 출력하기
-            store_info = soupCB.select("div.store_txt > table.store_table > tbody > tr > td")
-            store_address_list = list(store_info[2])
-            store_address = store_address_list[0]
-            store_phone = store_info[3].string
-            result.append([store_name]+[store_address]+[store_phone])
-        except:
-            continue 
+    wd.get(CoffeeBean_URL)
+    time.sleep(1)
+    
+    element = wd.find_element_by_id('region_srh')
+    element.click()
+    time.sleep(1)
+    
+    element = wd.find_element(By.ID, 'localTitle')
+    element.click()
+    time.sleep(1)
+    
+    # 경기 선택
+    element = wd.find_element(By.XPATH, '//*[@id="storeLocal"]/li[2]/a')
+    element.click()
+    time.sleep(1)
+
+    element = wd.find_element(By.ID, 'localTitle2')
+    element.click()
+    time.sleep(1)
+    
+    # 성남시 분당구 선택
+    element = wd.find_element(By.XPATH, '//*[@id="storeLocal2"]/li[9]/a')
+    element.click()
+    time.sleep(1)
+
+    ############################################################################
+    
+    # 서울 찾기 시작
+    # dropdown menu를 펼침
+    element = wd.find_element(By.ID, 'localTitle')
+    element.click()
+    time.sleep(1)
+    
+    element = wd.find_element(By.ID, 'storeLocal')
+    elements = element.find_elements(By.TAG_NAME, 'li')     # 지역명이 나와있는 리스트들을 찾고
+    for element in elements:        
+        if element.text == '경기':  # 텍스트에 경기를 갖고 있는 요소를 찾아냅니다.
+            break
+    
+    element.find_element(By.TAG_NAME, 'a')  # 해당 요소 하위 태그인 a 태그를 찾아내 클릭
+    element.click()
+    
+    time.sleep(1)
+    
+    # 성남시 분당구 찾기 시작 (위와 동일한 방식입니다.)
+    # dropdown menu를 펼침
+    element = wd.find_element_by_id('localTitle2')
+    element.click()
+    time.sleep(1)
+    
+    element = wd.find_element(By.ID, 'storeLocal2')
+    elements = element.find_elements(By.TAG_NAME, 'li')
+    for element in elements:
+        if element.text == '성남시 분당구':
+            break
+    
+    element.find_element(By.TAG_NAME, 'a')
+    element.click()
+    
+    
     return
 
 #[CODE 0]
